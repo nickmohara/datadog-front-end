@@ -1,4 +1,4 @@
-import Dashboard from "components/dashboard/dashboard.jsx";
+import Dashboard from "components/dashboard/index.jsx";
 
 const indexRoutes = [
   { path: "/", component: Dashboard, isExact: true }
