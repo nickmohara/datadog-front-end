@@ -20,11 +20,14 @@ let intervalId = 0;
 class Index extends React.Component {
 
   state = {
+    startTime: Date.now(),
     loadAverages: [],
     lastCpuUpdate: {},
     highCpuStartTime: null,
     recoveryStartTime: null,
     currentCpuState: stateInitial,
+    highCpuQuantity: 0,
+    recoveryQuantity: 0
   }
 
   componentDidMount = () => {
@@ -50,6 +53,8 @@ class Index extends React.Component {
     let cpu = data.loadAverage;
     let curLoadAvg = this.state.loadAverages;
     let currentCpuState = this.state.currentCpuState;
+    let currentHighCpuQuantity = this.state.highCpuQuantity;
+    let currentRecoveryQuantity = this.state.recoveryQuantity;
     let currentTimestamp = Date.now();
 
     // Remove first item in the array to account for the newest item while maintaining the exact lookbackPeriod
@@ -73,7 +78,8 @@ class Index extends React.Component {
         if (secondsSinceHighCpuStarted > highCpuAlertThreshold &&
             currentCpuState !== stateHighCpu) {
           this.setState({
-            currentCpuState: stateHighCpu
+            currentCpuState: stateHighCpu,
+            highCpuQuantity: currentHighCpuQuantity + 1
           })
         }
       }
@@ -99,16 +105,17 @@ class Index extends React.Component {
         if (secondsSinceRecoveryStarted > recoveryThreshold) {
           this.setState({
             currentCpuState: stateHasRecovered,
+            recoveryQuantity: currentRecoveryQuantity + 1,
             highCpuStartTime: null,
           })
         }
       }
     }
 
-    this.setState((state) => ({
+    this.setState({
       loadAverages: [...curLoadAvg, [timestamp, cpu]],
       lastCpuUpdate: data
-    }));
+    });
   }
 
   render() {
@@ -123,6 +130,9 @@ class Index extends React.Component {
               highCpuStartTime={this.state.highCpuStartTime}
               recoveryStartTime={this.state.recoveryStartTime}
               currentCpuState={this.state.currentCpuState}
+              highCpuQuantity={this.state.highCpuQuantity}
+              recoveryQuantity={this.state.recoveryQuantity}
+              startTime={this.state.startTime}
             />
             <Charts
               loadAverages={this.state.loadAverages}

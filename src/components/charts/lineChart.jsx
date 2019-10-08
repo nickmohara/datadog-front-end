@@ -10,7 +10,7 @@ import {
     ChartRow,
     YAxis,
     LineChart,
-    Resizable,
+    Resizable
 } from "react-timeseries-charts";
 
 import {
