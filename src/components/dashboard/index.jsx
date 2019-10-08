@@ -41,41 +41,47 @@ class Index extends React.Component {
       const res = await fetch("/getUsage");
       const data = await res.json();
 
-      this.handleUpdateCpuStats(data);
+      this.handleUpdateCpuData(data);
+      this.handleSetCpuState(data.loadAverage);
     } catch (e) {
       console.log('Server is not started. Please start the server and refresh the page.');
       clearInterval(intervalId);
     }
   }
 
-  handleUpdateCpuStats = (data) => {
+  handleUpdateCpuData = (data) => {
     let timestamp = data.timestamp;
     let cpu = data.loadAverage;
     let curLoadAvg = this.state.loadAverages;
-    let currentCpuState = this.state.currentCpuState;
-    let currentHighCpuQuantity = this.state.highCpuQuantity;
-    let currentRecoveryQuantity = this.state.recoveryQuantity;
-    let currentTimestamp = Date.now();
 
     // Remove first item in the array to account for the newest item while maintaining the exact lookbackPeriod
     if (curLoadAvg.length >= lookbackPeriod) {
       curLoadAvg.shift();
     }
 
-    // Check if we are heavy CPU
+    this.setState({
+      loadAverages: [...curLoadAvg, [timestamp, cpu]],
+      lastCpuUpdate: data
+    });
+  }
+
+  handleSetCpuState = (cpu) => {
+    let currentTimestamp = Date.now();
+    let currentCpuState = this.state.currentCpuState;
+    let currentHighCpuQuantity = this.state.highCpuQuantity;
+    let currentRecoveryQuantity = this.state.recoveryQuantity;
+
+    // We have high CPU
     if (cpu >= highCpuThreshold) {
       let highCpuStartTime = this.state.highCpuStartTime;
-      let secondsSinceHighCpuStarted = (currentTimestamp - highCpuStartTime) / 1000;
 
-      // First time getting high cpu; let's record it
       if (!highCpuStartTime) {
         this.setState({
-          highCpuStartTime: Date.now()
+          highCpuStartTime: Date.now() // keep track of when the high CPU started
         })
       } else {
-        // We have high CPU start time and it has been high long enough to alert the user
-        // Lets update the state to reflect that
-        if (secondsSinceHighCpuStarted > highCpuAlertThreshold &&
+        let secondsSinceHighCpuStarted = (currentTimestamp - highCpuStartTime) / 1000;
+        if (secondsSinceHighCpuStarted >= highCpuAlertThreshold &&
             currentCpuState !== stateHighCpu) {
           this.setState({
             currentCpuState: stateHighCpu,
@@ -85,37 +91,24 @@ class Index extends React.Component {
       }
     }
 
-    if (cpu < highCpuThreshold) {
-
-      // It was high CPU; now we just entered into recovery
-      if (currentCpuState === stateHighCpu) {
+    // Just entered into recovery
+    if (cpu < highCpuThreshold && currentCpuState === stateHighCpu) {
         this.setState({
           currentCpuState: stateRecovering,
           recoveryStartTime: Date.now()
-        })
-      }
-
-      // We are recovering; lets check to see if we successfully recovered
-      // IE we have passed the threshold for recovery time
-      if (currentCpuState === stateRecovering) {
-        let recoveryStartTime = this.state.recoveryStartTime;
-        let secondsSinceRecoveryStarted = (currentTimestamp - recoveryStartTime) / 1000;
-
-        // Check to see if we have been recovering long enough to alert the user that we successfully recovered
-        if (secondsSinceRecoveryStarted > recoveryThreshold) {
-          this.setState({
-            currentCpuState: stateHasRecovered,
-            recoveryQuantity: currentRecoveryQuantity + 1,
-            highCpuStartTime: null,
-          })
-        }
-      }
+        });
     }
 
-    this.setState({
-      loadAverages: [...curLoadAvg, [timestamp, cpu]],
-      lastCpuUpdate: data
-    });
+    // Check to see if we have been recovering long enough to be fully recovered
+    let recoveryStartTime = this.state.recoveryStartTime;
+    let secondsSinceRecoveryStarted = (currentTimestamp - recoveryStartTime) / 1000;
+    if (currentCpuState === stateRecovering && secondsSinceRecoveryStarted >= recoveryThreshold) {
+      this.setState({
+        currentCpuState: stateHasRecovered,
+        recoveryQuantity: currentRecoveryQuantity + 1,
+        highCpuStartTime: null,
+      })
+    }
   }
 
   render() {
