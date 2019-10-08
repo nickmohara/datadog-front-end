@@ -17,6 +17,8 @@ import {
   darkTheme
 } from 'components/charts/chartStyles.jsx';
 
+import 'components/charts/lineChart.css';
+
 class LineChartComponent extends React.Component {
 
   render() {
@@ -29,7 +31,7 @@ class LineChartComponent extends React.Component {
 
     return (
       <Resizable
-        style={{margin: '0px 10px 0px 10px'}}
+        className="line-chart-wrapper"
       >
         <ChartContainer
           title="Current CPU (10 min lookback)"

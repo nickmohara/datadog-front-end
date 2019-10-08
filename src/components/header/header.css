@@ -1,0 +1,7 @@
+.header-root {
+  flex-grow: 1;
+}
+
+.header-app-bar {
+  background: #6c4290 !important;
+}

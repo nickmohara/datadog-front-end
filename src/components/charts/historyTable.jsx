@@ -8,9 +8,10 @@ import Paper from '@material-ui/core/Paper';
 import moment from 'moment';
 
 import {
-  highCpuThreshold,
-  stateRecovering
+  highCpuThreshold
 } from 'assets/constants.jsx';
+
+import 'components/charts/historyTable.css';
 
 class TableHistoryComponent extends React.Component {
 
@@ -21,7 +22,7 @@ class TableHistoryComponent extends React.Component {
   render() {
     return (
       <Paper
-        style={{overflowX: 'auto', maxHeight: '370px'}}
+        className="history-table-wrapper"
       >
         <Table
           stickyHeader

@@ -1,0 +1,5 @@
+.history-table-wrapper {
+  overflow-x: auto;
+  max-height: 370px;
+  margin-right: 10px;
+}

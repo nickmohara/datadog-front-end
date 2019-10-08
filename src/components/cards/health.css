@@ -1,0 +1,23 @@
+.card-wrapper {
+  margin: 20px 10px 20px 10px;
+}
+
+.card-color-safe {
+  background-color: #28a745;
+}
+
+.card-color-danger {
+  background-color: #dc3545;
+}
+
+.card-color-recover {
+  background-color: #ffc107;
+}
+
+.text-primary {
+  color: #ffffff;
+}
+
+.text-secondary {
+  color: #e8e8e8;
+}

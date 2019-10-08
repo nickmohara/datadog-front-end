@@ -1,4 +1,8 @@
 export const datadogColor = '#6c4290';
+export const colorDanger = '#dc3545';
+export const colorWarning = '#ffc107';
+export const colorSafe = '#28a745';
+export const colorTextSecondary = '#e8e8e8';
 
 export const fetchFrequency = 1000; // every 10 second
 

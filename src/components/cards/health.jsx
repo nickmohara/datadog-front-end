@@ -4,6 +4,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 
+import 'components/cards/health.css';
+
 import {
   stateInitial,
   stateHighCpu,
@@ -13,14 +15,58 @@ import {
 
 class HighCpuComponent extends React.Component {
 
+  renderHealthStatus = () => {
+    if (this.props.currentCpuState === stateInitial ||
+        this.props.currentCpuState === stateHasRecovered) {
+      return 'Healthy';
+    }
+
+    if (this.props.currentCpuState === stateHighCpu) {
+      return 'Unhealthy';
+    }
+
+    return 'Recovering';
+  }
+
+  renderHealthSubtext = () => {
+    if (this.props.currentCpuState === stateInitial) {
+      return '-';
+    }
+
+    if (this.props.currentCpuState === stateHighCpu) {
+      return `Experiencing high CPU since ${moment.unix(this.props.highCpuStartTime / 1000).format("h:mm:ss A")}`;
+    }
+
+    if (this.props.currentCpuState === stateRecovering) {
+      return `Attempting to recover at ${moment.unix(this.props.recoveryStartTime / 1000).format("h:mm:ss A")}`;
+    }
+
+    return `Successfully recovered at ${moment.unix(this.props.recoveryStartTime / 1000).format("h:mm:ss A")}`;
+  }
+
+  renderCardCss = () => {
+    if (this.props.currentCpuState === stateInitial ||
+        this.props.currentCpuState === stateHasRecovered) {
+      return 'card-color-safe';
+    }
+
+    if (this.props.currentCpuState === stateHighCpu) {
+      return 'card-color-danger';
+    }
+
+    return 'card-color-recover';
+  }
+
   render() {
     return (
       <Card
-        style={{margin: '20px 10px 20px 10px'}}
+        className="card-wrapper"
       >
-        <CardContent>
+        <CardContent
+          className={this.renderCardCss()}
+        >
           <Typography
-            color="textSecondary"
+            className="text-secondary"
             gutterBottom
           >
             Current State
@@ -28,37 +74,15 @@ class HighCpuComponent extends React.Component {
           <Typography
             variant="h5"
             component="h2"
+            className="text-primary"
           >
-            {
-              this.props.currentCpuState === stateInitial || this.props.currentCpuState === stateHasRecovered ?
-              'Healthy' :
-              (
-                this.props.currentCpuState === stateHighCpu ?
-                'Unhealthy' :
-                'Recovering'
-              )
-            }
+            {this.renderHealthStatus()}
           </Typography>
           <Typography
             variant="body2"
-            color="textSecondary"
+            className="text-secondary"
           >
-            {
-              this.props.currentCpuState === stateInitial &&
-              '-'
-            }
-            {
-              this.props.currentCpuState === stateHighCpu &&
-              `Experiencing high CPU since ${moment.unix(this.props.highCpuStartTime / 1000).format("h:mm:ss A")}`
-            }
-            {
-              this.props.currentCpuState === stateRecovering &&
-              `Attempting to recover at ${moment.unix(this.props.recoveryStartTime / 1000).format("h:mm:ss A")}`
-            }
-            {
-              this.props.currentCpuState === stateHasRecovered &&
-              `Successfully recovered at ${moment.unix(this.props.recoveryStartTime / 1000).format("h:mm:ss A")}`
-            }
+            {this.renderHealthSubtext()}
           </Typography>
         </CardContent>
       </Card>

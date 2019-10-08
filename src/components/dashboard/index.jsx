@@ -52,6 +52,7 @@ class Index extends React.Component {
     let currentCpuState = this.state.currentCpuState;
     let currentTimestamp = Date.now();
 
+    // Remove first item in the array to account for the newest item while maintaining the exact lookbackPeriod
     if (curLoadAvg.length >= lookbackPeriod) {
       curLoadAvg.shift();
     }
@@ -67,7 +68,8 @@ class Index extends React.Component {
           highCpuStartTime: Date.now()
         })
       } else {
-        // We have high CPU start time and have not yet updated the state to reflect that
+        // We have high CPU start time and it has been high long enough to alert the user
+        // Lets update the state to reflect that
         if (secondsSinceHighCpuStarted > highCpuAlertThreshold &&
             currentCpuState !== stateHighCpu) {
           this.setState({
@@ -77,10 +79,9 @@ class Index extends React.Component {
       }
     }
 
-    // Check if we are recovering more than a minute ago
     if (cpu < highCpuThreshold) {
 
-      // It was high CPU; now we are in recovery
+      // It was high CPU; now we just entered into recovery
       if (currentCpuState === stateHighCpu) {
         this.setState({
           currentCpuState: stateRecovering,
@@ -94,8 +95,8 @@ class Index extends React.Component {
         let recoveryStartTime = this.state.recoveryStartTime;
         let secondsSinceRecoveryStarted = (currentTimestamp - recoveryStartTime) / 1000;
 
+        // Check to see if we have been recovering long enough to alert the user that we successfully recovered
         if (secondsSinceRecoveryStarted > recoveryThreshold) {
-          // We recovered
           this.setState({
             currentCpuState: stateHasRecovered,
             highCpuStartTime: null,
@@ -125,7 +126,6 @@ class Index extends React.Component {
             />
             <Charts
               loadAverages={this.state.loadAverages}
-              currentCpuState={this.state.currentCpuState}
             />
           </div>
         )}

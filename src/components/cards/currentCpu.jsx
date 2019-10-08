@@ -4,12 +4,18 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 
+import {
+  highCpuThreshold
+} from 'assets/constants.jsx';
+
+import 'components/cards/currentCpu.css';
+
 class CurrentCpuComponent extends React.Component {
 
   render() {
     return (
       <Card
-        style={{margin: '20px 10px 20px 10px'}}
+        className="card-wrapper"
       >
         <CardContent>
           <Typography
@@ -21,6 +27,7 @@ class CurrentCpuComponent extends React.Component {
           <Typography
             variant="h5"
             component="h2"
+            className={this.props.lastCpuUpdate.loadAverage > highCpuThreshold ? 'color-danger' : 'color-safe'}
           >
             {(this.props.lastCpuUpdate.loadAverage * 100).toFixed(0)}%
           </Typography>
