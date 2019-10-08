@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import CurrentCpu from 'components/cards/currentCpu.jsx';
-import Health from 'components/cards/health.jsx';
+import LineChart from 'components/charts/lineChart.jsx';
+import HistoryTable from 'components/charts/historyTable.jsx';
 
 class CurrentCpuComponent extends React.Component {
 
@@ -13,21 +13,19 @@ class CurrentCpuComponent extends React.Component {
       >
         <Grid
           item
-          xs
+          xs={8}
         >
-          <CurrentCpu
-            lastCpuUpdate={this.props.lastCpuUpdate}
+          <LineChart
+            loadAverages={this.props.loadAverages}
           />
         </Grid>
         <Grid
           item
-          xs
+          xs={4}
         >
-          <Health
-            lastCpuUpdate={this.props.lastCpuUpdate}
+          <HistoryTable
+            loadAverages={this.props.loadAverages}
             currentCpuState={this.props.currentCpuState}
-            highCpuStartTime={this.props.highCpuStartTime}
-            recoveryStartTime={this.props.recoveryStartTime}
           />
         </Grid>
       </Grid>

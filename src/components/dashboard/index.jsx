@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from 'components/header/header.jsx';
 import Stats from 'components/views/stats.jsx';
-import LineChart from 'components/charts/lineChart.jsx';
+import Charts from 'components/views/charts.jsx';
 
 import {
   lookbackPeriod,
@@ -123,8 +123,9 @@ class Index extends React.Component {
               recoveryStartTime={this.state.recoveryStartTime}
               currentCpuState={this.state.currentCpuState}
             />
-            <LineChart
+            <Charts
               loadAverages={this.state.loadAverages}
+              currentCpuState={this.state.currentCpuState}
             />
           </div>
         )}

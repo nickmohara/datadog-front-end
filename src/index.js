@@ -7,7 +7,9 @@ import indexRoutes from "./routes/index.jsx";
 const hist = createBrowserHistory();
 
 ReactDOM.render(
-  <Router history={hist}>
+  <Router
+    history={hist}
+  >
     <Switch>
       {indexRoutes.map((prop, key) => {
         return (

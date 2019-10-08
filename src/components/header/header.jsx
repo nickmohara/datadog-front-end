@@ -21,10 +21,17 @@ export default function ButtonAppBar() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
+    <div
+      className={classes.root}
+    >
+      <AppBar
+        position="static"
+        className={classes.appBar}
+      >
         <Toolbar>
-          <Typography variant="h6">
+          <Typography
+            variant="h6"
+          >
             Datadog CPU Monitor
           </Typography>
         </Toolbar>

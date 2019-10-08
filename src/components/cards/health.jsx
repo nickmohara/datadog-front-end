@@ -15,15 +15,23 @@ class HighCpuComponent extends React.Component {
 
   render() {
     return (
-      <Card style={{margin: '20px 10px 20px 10px'}}>
+      <Card
+        style={{margin: '20px 10px 20px 10px'}}
+      >
         <CardContent>
-          <Typography color="textSecondary" gutterBottom>
+          <Typography
+            color="textSecondary"
+            gutterBottom
+          >
             Current State
           </Typography>
-          <Typography variant="h5" component="h2">
+          <Typography
+            variant="h5"
+            component="h2"
+          >
             {
               this.props.currentCpuState === stateInitial || this.props.currentCpuState === stateHasRecovered ?
-              'Healthly' :
+              'Healthy' :
               (
                 this.props.currentCpuState === stateHighCpu ?
                 'Unhealthy' :
@@ -31,7 +39,10 @@ class HighCpuComponent extends React.Component {
               )
             }
           </Typography>
-          <Typography variant="body2" color="textSecondary">
+          <Typography
+            variant="body2"
+            color="textSecondary"
+          >
             {
               this.props.currentCpuState === stateInitial &&
               '-'
@@ -41,7 +52,7 @@ class HighCpuComponent extends React.Component {
               `Experiencing high CPU since ${moment.unix(this.props.highCpuStartTime / 1000).format("h:mm:ss A")}`
             }
             {
-              this.props.currentCpuState === stateRecovering && 
+              this.props.currentCpuState === stateRecovering &&
               `Attempting to recover at ${moment.unix(this.props.recoveryStartTime / 1000).format("h:mm:ss A")}`
             }
             {

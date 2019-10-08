@@ -28,7 +28,9 @@ class LineChartComponent extends React.Component {
     });
 
     return (
-      <Resizable style={{margin: '0px 10px 0px 10px'}}>
+      <Resizable
+        style={{margin: '0px 10px 0px 10px'}}
+      >
         <ChartContainer
           title="Current CPU (10 min lookback)"
           style={{
@@ -48,7 +50,9 @@ class LineChartComponent extends React.Component {
           paddingBottom={0}
           timeRange={series.range()}
       >
-          <ChartRow height="300">
+          <ChartRow
+            height="300"
+          >
             <YAxis
               id="cpu"
               label="CPU %"

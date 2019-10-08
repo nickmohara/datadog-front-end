@@ -8,15 +8,26 @@ class CurrentCpuComponent extends React.Component {
 
   render() {
     return (
-      <Card style={{margin: '20px 10px 20px 10px'}}>
+      <Card
+        style={{margin: '20px 10px 20px 10px'}}
+      >
         <CardContent>
-          <Typography color="textSecondary" gutterBottom>
+          <Typography
+            color="textSecondary"
+            gutterBottom
+          >
             Current CPU
           </Typography>
-          <Typography variant="h5" component="h2">
+          <Typography
+            variant="h5"
+            component="h2"
+          >
             {(this.props.lastCpuUpdate.loadAverage * 100).toFixed(0)}%
           </Typography>
-          <Typography variant="body2" color="textSecondary">
+          <Typography
+            variant="body2"
+            color="textSecondary"
+          >
             Last Updated: {moment.unix(this.props.lastCpuUpdate.timestamp / 1000).format("h:mm:ss A")}
           </Typography>
         </CardContent>
