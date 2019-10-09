@@ -15,19 +15,29 @@ import {
   stateHasRecovered,
 } from 'assets/constants.jsx';
 
+// Required when running unit tests for our async function
+import 'babel-polyfill';
+
 let intervalId = 0;
+
+const initialState = {
+  startTime: Date.now(),
+  loadAverages: [],
+  lastCpuUpdate: {},
+  highCpuStartTime: null,
+  recoveryStartTime: null,
+  currentCpuState: stateInitial,
+  highCpuQuantity: 0,
+  recoveryQuantity: 0
+}
 
 class Index extends React.Component {
 
-  state = {
-    startTime: Date.now(),
-    loadAverages: [],
-    lastCpuUpdate: {},
-    highCpuStartTime: null,
-    recoveryStartTime: null,
-    currentCpuState: stateInitial,
-    highCpuQuantity: 0,
-    recoveryQuantity: 0
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...initialState
+    }
   }
 
   componentDidMount = () => {
@@ -70,45 +80,56 @@ class Index extends React.Component {
     let currentCpuState = this.state.currentCpuState;
     let currentHighCpuQuantity = this.state.highCpuQuantity;
     let currentRecoveryQuantity = this.state.recoveryQuantity;
+    let highCpuStartTime = this.state.highCpuStartTime;
 
-    // We have high CPU
     if (cpu >= highCpuThreshold) {
-      let highCpuStartTime = this.state.highCpuStartTime;
-
-      if (!highCpuStartTime) {
-        this.setState({
-          highCpuStartTime: Date.now() // keep track of when the high CPU started
-        })
-      } else {
-        let secondsSinceHighCpuStarted = (currentTimestamp - highCpuStartTime) / 1000;
-        if (secondsSinceHighCpuStarted >= highCpuAlertThreshold &&
-            currentCpuState !== stateHighCpu) {
-          this.setState({
-            currentCpuState: stateHighCpu,
-            highCpuQuantity: currentHighCpuQuantity + 1
-          })
-        }
-      }
+      this.handleUpdateStateToHighCpu(highCpuStartTime, currentTimestamp, currentCpuState, currentHighCpuQuantity);
     }
 
-    // Just entered into recovery
     if (cpu < highCpuThreshold && currentCpuState === stateHighCpu) {
-        this.setState({
-          currentCpuState: stateRecovering,
-          recoveryStartTime: Date.now()
-        });
+      this.handleUpdateStateToRecovering();
     }
 
     // Check to see if we have been recovering long enough to be fully recovered
     let recoveryStartTime = this.state.recoveryStartTime;
     let secondsSinceRecoveryStarted = (currentTimestamp - recoveryStartTime) / 1000;
     if (currentCpuState === stateRecovering && secondsSinceRecoveryStarted >= recoveryThreshold) {
+      this.handleUpdateStateToRecovered(currentRecoveryQuantity);
+    }
+  }
+
+  handleUpdateStateToHighCpu = (highCpuStartTime, currentTimestamp, currentCpuState, currentHighCpuQuantity) => {
+    if (!highCpuStartTime) {
       this.setState({
-        currentCpuState: stateHasRecovered,
-        recoveryQuantity: currentRecoveryQuantity + 1,
-        highCpuStartTime: null,
+        highCpuStartTime: Date.now() // keep track of when the high CPU started
+      })
+
+      return;
+    }
+
+    let secondsSinceHighCpuStarted = (currentTimestamp - highCpuStartTime) / 1000;
+    if (secondsSinceHighCpuStarted >= highCpuAlertThreshold &&
+        currentCpuState !== stateHighCpu) {
+      this.setState({
+        currentCpuState: stateHighCpu,
+        highCpuQuantity: currentHighCpuQuantity + 1
       })
     }
+  }
+
+  handleUpdateStateToRecovering = () => {
+    this.setState({
+      currentCpuState: stateRecovering,
+      recoveryStartTime: Date.now()
+    });
+  }
+
+  handleUpdateStateToRecovered = (currentRecoveryQuantity) => {
+    this.setState({
+      currentCpuState: stateHasRecovered,
+      recoveryQuantity: currentRecoveryQuantity + 1,
+      highCpuStartTime: null,
+    })
   }
 
   render() {
